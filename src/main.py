@@ -5,11 +5,11 @@ Von hier wird das Hauptprogramm gestartet und die QApplication erzeugt
 '''
 from PyQt4.QtGui import QApplication
 from sys import argv
-import MainPogramm
+import MainProgramm
 
 app = QApplication(argv)
 
-MainPogramm.MainPorgamm()   
+MainProgramm.MainProgramm()   
 
 app.exec_()
 

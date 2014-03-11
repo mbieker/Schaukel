@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file './main_window.ui'
+# Form implementation generated from reading ui file 'ui/main_window.ui'
 #
-# Created: Fri Mar  7 17:57:46 2014
+# Created: Sun Mar  9 19:05:58 2014
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -30,13 +30,16 @@ class Ui_MainWindow(object):
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.groupBox_2 = QtGui.QGroupBox(self.centralwidget)
-        self.groupBox_2.setGeometry(QtCore.QRect(600, 160, 171, 111))
+        self.groupBox_2.setGeometry(QtCore.QRect(600, 160, 181, 111))
         self.groupBox_2.setObjectName(_fromUtf8("groupBox_2"))
         self.connect_button = QtGui.QPushButton(self.groupBox_2)
-        self.connect_button.setGeometry(QtCore.QRect(10, 40, 161, 27))
+        self.connect_button.setGeometry(QtCore.QRect(10, 40, 171, 27))
         self.connect_button.setObjectName(_fromUtf8("connect_button"))
+        self.ref_point_button = QtGui.QPushButton(self.groupBox_2)
+        self.ref_point_button.setGeometry(QtCore.QRect(10, 80, 171, 27))
+        self.ref_point_button.setObjectName(_fromUtf8("ref_point_button"))
         self.groupBox = QtGui.QGroupBox(self.centralwidget)
-        self.groupBox.setGeometry(QtCore.QRect(600, 40, 171, 111))
+        self.groupBox.setGeometry(QtCore.QRect(600, 40, 181, 111))
         self.groupBox.setObjectName(_fromUtf8("groupBox"))
         self.verticalLayoutWidget_3 = QtGui.QWidget(self.groupBox)
         self.verticalLayoutWidget_3.setGeometry(QtCore.QRect(10, 30, 160, 80))
@@ -85,6 +88,7 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow", None))
         self.groupBox_2.setTitle(_translate("MainWindow", "Konfiguration", None))
         self.connect_button.setText(_translate("MainWindow", "Punkte Verbinden", None))
+        self.ref_point_button.setText(_translate("MainWindow", "Referenzpunkt setzen", None))
         self.groupBox.setTitle(_translate("MainWindow", "Eichung", None))
         self.scale_label.setText(_translate("MainWindow", "Massstab: ?? px/m", None))
         self.calibrate_button.setText(_translate("MainWindow", "Kalibieren", None))

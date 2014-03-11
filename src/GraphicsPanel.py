@@ -97,9 +97,12 @@ class GraphPanel(QGraphicsView):
         else:
             self.CoM.setVisible(False)
             
+    def setReferencePoint(self,ReferencePoint,oldRefPoint = None):
+        if not ReferencePoint == None:
+            self.PointList[ReferencePoint].setRect(-15,-15,30,30)
+        if not oldRefPoint == None:
+            self.PointList[oldRefPoint].setRect(-10,-10,20,20)
         
-        
-
 
 class Cylinder(QGraphicsLineItem):
 
