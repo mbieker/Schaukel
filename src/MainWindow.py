@@ -26,6 +26,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.actionVerbinden.triggered.connect(self.MainProgramm.ConnectWiimotes) # Verbinden Menue bereitstellen
         self.actionBeenden.triggered.connect(self.close) # Butten zum schliessen des Programms
         
+        
+#Imoprt und Exportknöpfe
+        self.rec.hide()
+        self.play.hide()
+        self.timeline.hide()
+        self.playback_radio.setDisabled(True)
+        self.live_radio.setDisabled(True)
+             
 # sind keine Punkte markiert, werden alle Optionen fuer verbindungen und den Referenzpunkt ausgeblende
         self.calibrate_button.setDisabled(True)
         self.connect_button.setDisabled(True)

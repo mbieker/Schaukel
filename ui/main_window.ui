@@ -95,14 +95,79 @@
    <widget class="QGroupBox" name="groupBox_3">
     <property name="geometry">
      <rect>
-      <x>600</x>
-      <y>270</y>
-      <width>161</width>
-      <height>91</height>
+      <x>610</x>
+      <y>290</y>
+      <width>171</width>
+      <height>131</height>
      </rect>
     </property>
     <property name="title">
      <string>Messung</string>
+    </property>
+    <widget class="QPushButton" name="rec">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>40</y>
+       <width>98</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Aufnehmen</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="play">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>70</y>
+       <width>98</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Wiedergeben</string>
+     </property>
+    </widget>
+    <widget class="QSlider" name="timeline">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>100</y>
+       <width>160</width>
+       <height>19</height>
+      </rect>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QRadioButton" name="live_radio">
+    <property name="geometry">
+     <rect>
+      <x>620</x>
+      <y>430</y>
+      <width>114</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Live Ansicht</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="playback_radio">
+    <property name="geometry">
+     <rect>
+      <x>620</x>
+      <y>450</y>
+      <width>114</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Widergabe</string>
     </property>
    </widget>
   </widget>

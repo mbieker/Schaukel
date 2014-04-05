@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'ui/main_window.ui'
+# Form implementation generated from reading ui file 'main_window.ui'
 #
-# Created: Sun Mar  9 19:05:58 2014
+# Created: Thu Mar 27 14:23:41 2014
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -54,8 +54,24 @@ class Ui_MainWindow(object):
         self.calibrate_button.setObjectName(_fromUtf8("calibrate_button"))
         self.verticalLayout_4.addWidget(self.calibrate_button)
         self.groupBox_3 = QtGui.QGroupBox(self.centralwidget)
-        self.groupBox_3.setGeometry(QtCore.QRect(600, 270, 161, 91))
+        self.groupBox_3.setGeometry(QtCore.QRect(610, 290, 171, 131))
         self.groupBox_3.setObjectName(_fromUtf8("groupBox_3"))
+        self.rec = QtGui.QPushButton(self.groupBox_3)
+        self.rec.setGeometry(QtCore.QRect(20, 40, 98, 27))
+        self.rec.setObjectName(_fromUtf8("rec"))
+        self.play = QtGui.QPushButton(self.groupBox_3)
+        self.play.setGeometry(QtCore.QRect(20, 70, 98, 27))
+        self.play.setObjectName(_fromUtf8("play"))
+        self.timeline = QtGui.QSlider(self.groupBox_3)
+        self.timeline.setGeometry(QtCore.QRect(10, 100, 160, 19))
+        self.timeline.setOrientation(QtCore.Qt.Horizontal)
+        self.timeline.setObjectName(_fromUtf8("timeline"))
+        self.live_radio = QtGui.QRadioButton(self.centralwidget)
+        self.live_radio.setGeometry(QtCore.QRect(620, 430, 114, 22))
+        self.live_radio.setObjectName(_fromUtf8("live_radio"))
+        self.playback_radio = QtGui.QRadioButton(self.centralwidget)
+        self.playback_radio.setGeometry(QtCore.QRect(620, 450, 114, 22))
+        self.playback_radio.setObjectName(_fromUtf8("playback_radio"))
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 843, 25))
@@ -93,6 +109,10 @@ class Ui_MainWindow(object):
         self.scale_label.setText(_translate("MainWindow", "Massstab: ?? px/m", None))
         self.calibrate_button.setText(_translate("MainWindow", "Kalibieren", None))
         self.groupBox_3.setTitle(_translate("MainWindow", "Messung", None))
+        self.rec.setText(_translate("MainWindow", "Aufnehmen", None))
+        self.play.setText(_translate("MainWindow", "Wiedergeben", None))
+        self.live_radio.setText(_translate("MainWindow", "Live Ansicht", None))
+        self.playback_radio.setText(_translate("MainWindow", "Widergabe", None))
         self.menuWiiMotes.setTitle(_translate("MainWindow", "Datei", None))
         self.menuInfo.setTitle(_translate("MainWindow", "Info", None))
         self.menuDaten.setTitle(_translate("MainWindow", "Daten", None))
