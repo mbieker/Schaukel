@@ -7,8 +7,9 @@ Diese Klasse steuert das Verhalten des Hauptfensters
 '''
 from Ui_MainWindow import Ui_MainWindow
 from PyQt4.QtGui import QMainWindow 
-from PyQt4.Qt import QVector2D, QGraphicsView
+from PyQt4.Qt import QVector2D, QGraphicsView, QMessageBox, QFileDialog
 from GraphicsPanel import GraphPanel
+import MainProgramm
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -25,15 +26,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.Panel.setGeometry(30,50,541,434)
         self.actionVerbinden.triggered.connect(self.MainProgramm.ConnectWiimotes) # Verbinden Menue bereitstellen
         self.actionBeenden.triggered.connect(self.close) # Butten zum schliessen des Programms
+
         
         
 #Imoprt und Exportknöpfe
         self.rec.hide()
-        self.play.hide()
+
+
         self.timeline.hide()
         self.playback_radio.setDisabled(True)
         self.live_radio.setDisabled(True)
-             
+        self.rec.clicked.connect(self.RecButtonToggled)            
 # sind keine Punkte markiert, werden alle Optionen fuer verbindungen und den Referenzpunkt ausgeblende
         self.calibrate_button.setDisabled(True)
         self.connect_button.setDisabled(True)
@@ -79,3 +82,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def SelectRefPointButtonPressed(self):
         self.MainProgramm.setReferencePoint(self.Panel.scene.selectedItems()[0])
         
+    def RecButtonToggled(self):
+        if self.rec.text() == 'Aufnehmen':
+            if not self.MainProgramm.RecordingTmpFile == None:
+                msgbox = QMessageBox(QMessageBox.Question, "Frage", "Soll die vorherige Messung ueberschrieben werden ?", QMessageBox.No| QMessageBox.Yes)
+                if msgbox.exec_() == QMessageBox.No:
+                    return
+            self.MainProgramm.StartRecording()
+            self.Panel.setRecFrame(True)
+            self.rec.setText('Stop')
+            
+        else:
+            self.MainProgramm.StopRecording()
+            self.rec.setText("Aufnehmen")
+            self.Panel.setRecFrame(False)
+            

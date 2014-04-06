@@ -107,27 +107,14 @@
     <widget class="QPushButton" name="rec">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>40</y>
+       <x>10</x>
+       <y>60</y>
        <width>98</width>
        <height>27</height>
       </rect>
      </property>
      <property name="text">
       <string>Aufnehmen</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="play">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>70</y>
-       <width>98</width>
-       <height>27</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Wiedergeben</string>
      </property>
     </widget>
     <widget class="QSlider" name="timeline">
@@ -192,15 +179,19 @@
     <property name="title">
      <string>Info</string>
     </property>
+    <addaction name="actionAbout"/>
    </widget>
-   <widget class="QMenu" name="menuDaten">
+   <widget class="QMenu" name="menuMessung">
     <property name="title">
-     <string>Daten</string>
+     <string>Messung</string>
     </property>
+    <addaction name="actionAls_CSV_exportieren"/>
+    <addaction name="actionSpeicheren"/>
+    <addaction name="actionLaden"/>
    </widget>
    <addaction name="menuWiiMotes"/>
+   <addaction name="menuMessung"/>
    <addaction name="menuInfo"/>
-   <addaction name="menuDaten"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionVerbinden">
@@ -217,6 +208,36 @@
    </property>
    <property name="shortcut">
     <string>Q</string>
+   </property>
+  </action>
+  <action name="new_project">
+   <property name="text">
+    <string>Neue Messung</string>
+   </property>
+  </action>
+  <action name="load_project">
+   <property name="text">
+    <string>Messung Laden</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="actionAls_CSV_exportieren">
+   <property name="text">
+    <string>Als CSV exportieren</string>
+   </property>
+  </action>
+  <action name="actionSpeicheren">
+   <property name="text">
+    <string>Speicheren</string>
+   </property>
+  </action>
+  <action name="actionLaden">
+   <property name="text">
+    <string>Laden</string>
    </property>
   </action>
  </widget>

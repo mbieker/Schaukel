@@ -45,8 +45,7 @@ class GraphPanel(QGraphicsView):
         QGraphicsView.__init__(self,parent)
         self.scene = QGraphicsScene(self)
         self.scale(0.5,0.5)
-        self.scene.setSceneRect(0,0,1024,768)
-        self.scene.addRect(0,0,1024,768)
+        self.frame = self.scene.addRect(0,0,1024,786)
         self.setScene(self.scene)
         self.PointList = [] 
         for i in range(8):
@@ -61,6 +60,7 @@ class GraphPanel(QGraphicsView):
     
 
     def redraw(self,newPointList, newJointList, newCoM = None):
+        
         
         for i in range(8):
             if(newPointList[i] == None):
@@ -102,8 +102,17 @@ class GraphPanel(QGraphicsView):
             self.PointList[ReferencePoint].setRect(-15,-15,30,30)
         if not oldRefPoint == None:
             self.PointList[oldRefPoint].setRect(-10,-10,20,20)
-        
 
+    
+    def setRecFrame(self, Recording = False):
+        if Recording:
+            Pen = QPen(Qt.red)
+            Pen.setWidth(5)
+        else:
+            Pen = QPen(Qt.black)
+            Pen.setWidth(1)
+            
+        self.frame.setPen(Pen)
 class Cylinder(QGraphicsLineItem):
 
 
@@ -116,6 +125,7 @@ class Cylinder(QGraphicsLineItem):
     def getMiddle(self):
 
         return QVector2D(0.5*(self.line().x1()+self.line().x2()),0.5*(self.line().y1()+self.line().y2()))
+
 
         
     

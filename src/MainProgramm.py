@@ -12,17 +12,25 @@ steuert.
 import MainWindow
 from PyQt4.Qt import QTimer, QVector2D, QDialog
 import cwiid
-import WiiMoteConnect
+import ExportSave
 from Dialogs import MassRadDiag, ConnectDiag
+from GraphicsPanel import Point
+from copy import deepcopy , copy
 
 class MainProgramm:
-    PointList = [0]*8
+    
+    PointList = [None]*8
     PointTimeOutList = [12]*8
     JointList = []
-    updateThread = []
+    #updateThread = []
+
     ReferencePoint = None
     TrackReferencePoint = None
     device_list = [None,None]
+    renderTimer = None
+    recording = False
+    RecordingTmpFile = []
+
     def __init__(self ):
     
 
@@ -31,33 +39,35 @@ class MainProgramm:
         self.renderTimer = QTimer()
         self.renderTimer.start(20)
         self.renderTimer.timeout.connect(self.Repaint)
-        cnt = 0
-        for i in self.device_list:
-            if(isinstance(i, cwiid.Wiimote)):
-                self.updateThread.append(WiiMoteConnect.UpdateWiiMote(cnt,self))
-                self.updateThread[cnt].start()
-                print 'Updates fuer Geraet ' + str(cnt) + 'gestartet'
-                cnt += 1
-            else:
-                print 'Hier kein Geraet'
-                
-    def report(self,data, device_id):
-        for i in range(0,4):
-            if(not data[i] == None):
-                #Position des Punktes updateten
-                self.PointList[i+4*device_id] = QVector2D(data[i]['pos'][0],data[i]['pos'][1])
-                self.PointTimeOutList[i+4*device_id] = 0
-            else:
-                #Punkt Connection Lost counter
-                if(self.PointTimeOutList[i+4*device_id] >= 12):
-                    self.PointTimeOutList[i+4*device_id] = 12
+        self.updateTimer = QTimer()
+        self.updateTimer.timeout.connect(self.report)
 
-                else:
-                    self.PointTimeOutList[i+4*device_id] += 1
-            self.PointList[4] = QVector2D(200,500)
-            self.PointList[5] = QVector2D(500,500)
-            self.PointTimeOutList[4] = 0
-            self.PointTimeOutList[5] = 0
+                
+    def report(self):
+        cnt = 0
+
+        for device in self.device_list:
+          
+            if not device == None:
+                data = device.state['ir_src']
+                for i in range(0,4):
+                    if not data[i] == None:
+                        #Position des Punktes updateten
+                        self.PointList[i+4*cnt] = QVector2D(data[i]['pos'][0],data[i]['pos'][1])
+                        self.PointTimeOutList[i+4*cnt] = 0
+                    else:
+                        #Punkt Connection Lost counter
+                        if(self.PointTimeOutList[i+4*cnt] >= 5):
+                            self.PointTimeOutList[i+4*cnt] = 5
+                            self.PointList[i+4*cnt] = None
+                        else:
+                            self.PointTimeOutList[i+4*cnt] += 1
+                cnt += 1
+            
+        if self.recording:
+            self.RecordingTmpFile.append(copy(self.PointList))
+
+
 
     def CreateJoint(self,PointList):
         diag = MassRadDiag()
@@ -89,12 +99,13 @@ class MainProgramm:
             self.ReferencePoint = None 
             self.Window.Panel.setReferencePoint(None, oldRefPoint)
 
-        
+
     def Repaint(self):
+
         PointsToDraw = []
         IDstoDraw = []
         for i in range(8):
-            if self.PointTimeOutList[i] <= 11:
+            if self.PointTimeOutList[i] <= 4:
                 PointsToDraw.append(self.PointList[i].toPointF())
                 IDstoDraw.append(i)
             else:
@@ -111,12 +122,19 @@ class MainProgramm:
         cnt = 0
         for i in self.device_list:
             if(isinstance(i, cwiid.Wiimote)):
-                self.updateThread.append(WiiMoteConnect.UpdateWiiMote(cnt,self))                
-                self.updateThread[cnt].start()
                 print 'Updates für Geraet ' + str(cnt) + 'gestartet'
                 cnt += 1
             else:
                 print 'Hier kein Gerät'
+        if not cnt == 0:
+            self.updateTimer.start(10)
+            self.Window.live_radio.setEnabled(True)
+            self.Window.live_radio.setChecked(True)
+            self.Window.rec.show()
+
+        else:
+            self.Window.live_radio.setDisabled(True) 
+            self.Window.hide()
                 
                 
     def DoPhysics(self):
@@ -147,3 +165,14 @@ class MainProgramm:
             diag = ConnectDiag(self.device_list)
             diag.exec_()
             self.update_device_list()
+            
+    def StartRecording(self):
+        self.recording = True
+        return
+    
+    def StopRecording(self):
+        self.recording = False
+        ExportSave.ExportCSV(self.RecordingTmpFile,'test1.csv')
+
+
+        

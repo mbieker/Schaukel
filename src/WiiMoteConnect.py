@@ -43,6 +43,7 @@ class ConnectWiiMote(QThread):
         try:
             self.device_list[self.id] = cwiid.Wiimote()
             self.device_list[self.id].led = 12
+            self.device_list[self.id].rpt_mode = cwiid.RPT_IR
             self.state_box_text.emit("Verbunden")
             self.state_box_color.emit('background-color:rgb(0,255,0)')
         except RuntimeError:
