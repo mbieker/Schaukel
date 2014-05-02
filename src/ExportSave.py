@@ -25,8 +25,35 @@ def ExportCSV(RecTmp, Filename, Seperator = ',', NoneChar = None):
         return True
         
 
+### Messung im eigenen Format speicheren
 
+def SaveData(RecTmp, JointList, ReferencePoint, Filename):
+    import pickle , hashlib
+    with open(Filename, 'wb') as savefile:
+        
+        data = pickle.dumps([RecTmp,JointList,ReferencePoint])
+        savefile.write(hashlib.md5(data+"Daleks").hexdigest()+'\n'+data)
+        savefile.close()
+        return True
+    return False
+        
+        
 
+def LoadData(Filename):
+
+    import pickle, hashlib
+    with open(Filename, 'rb') as loadfile:
+        content = loadfile.read()
+        data = content[33:]
+        checksum = hashlib.md5(data+"Daleks").hexdigest()
+        print checksum
+        print content[:32]
+        if checksum == content[:32]:
+            print "gut"
+            return True , pickle.loads(data)
+        else:
+            return False,( None, None, None)
+    return False, (None , None ,None)
 
 
 

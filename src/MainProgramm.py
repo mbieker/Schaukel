@@ -10,17 +10,18 @@ steuert.
 '''
 
 import MainWindow
-from PyQt4.Qt import QTimer, QVector2D, QDialog
+from PyQt4.Qt import QTimer, QVector2D, QDialog, QMessageBox
 import cwiid
 import ExportSave
 from Dialogs import MassRadDiag, ConnectDiag
-from GraphicsPanel import Point
-from copy import deepcopy , copy
+
+from copy import  copy
+from ExportSave import SaveData, ExportCSV, LoadData
 
 class MainProgramm:
     
     PointList = [None]*8
-    PointTimeOutList = [12]*8
+    PointTimeOutList = [5]*8
     JointList = []
     #updateThread = []
 
@@ -29,7 +30,10 @@ class MainProgramm:
     device_list = [None,None]
     renderTimer = None
     recording = False
-    RecordingTmpFile = []
+    RecordingTmpFile = None
+    DataSaved = True
+    State = "S" # S-Stop/Pause , P-Play , L-Live(Record) 
+    PlaybackPos = 0 
 
     def __init__(self ):
     
@@ -45,7 +49,6 @@ class MainProgramm:
                 
     def report(self):
         cnt = 0
-
         for device in self.device_list:
           
             if not device == None:
@@ -105,18 +108,17 @@ class MainProgramm:
         PointsToDraw = []
         IDstoDraw = []
         for i in range(8):
-            if self.PointTimeOutList[i] <= 4:
+            if not self.PointList[i] == None:
                 PointsToDraw.append(self.PointList[i].toPointF())
                 IDstoDraw.append(i)
             else:
                 PointsToDraw.append(None)
-        JointsToDraw = []
-        for joint in self.JointList:
-            if set(IDstoDraw) >= joint[0]:
-                JointsToDraw.append(joint)
-            
+                JointsToDraw = []
+                for joint in self.JointList:
+                    if set(IDstoDraw) >= joint[0]:
+                        JointsToDraw.append(joint)            
         self.Window.Panel.redraw(PointsToDraw,JointsToDraw, self.DoPhysics())
-        
+
  
     def update_device_list(self):
         cnt = 0
@@ -127,7 +129,6 @@ class MainProgramm:
             else:
                 print 'Hier kein Gerät'
         if not cnt == 0:
-            self.updateTimer.start(10)
             self.Window.live_radio.setEnabled(True)
             self.Window.live_radio.setChecked(True)
             self.Window.rec.show()
@@ -139,7 +140,12 @@ class MainProgramm:
                 
     def DoPhysics(self):
         
-        JointsToUse = self.JointList
+        
+        JointsToUse = []
+        
+        for joint in self.JointList:
+            if  self.PointList[list(joint[0])[0]] != None and   self.PointList[list(joint[0])[1]] != None:
+                JointsToUse.append(joint)      
         
         #Berechung des CoM
         CoM = QVector2D(0,0)
@@ -152,13 +158,13 @@ class MainProgramm:
         CoM = CoM/TotalMass
         if TotalMass == 0:
             return None
-        print CoM
         return CoM
         
         
         
         
     def CenterOfJoint(self, Joint):
+        
         return 0.5*(self.PointList[list(Joint[0])[0]]+self.PointList[list(Joint[0])[1]])
 
     def ConnectWiimotes(self):
@@ -168,11 +174,59 @@ class MainProgramm:
             
     def StartRecording(self):
         self.recording = True
+        self.RecordingTmpFile = []
         return
     
     def StopRecording(self):
         self.recording = False
-        ExportSave.ExportCSV(self.RecordingTmpFile,'test1.csv')
+        self.DataSaved = False
 
+        ExportSave.ExportCSV(self.RecordingTmpFile,'test1.csv')
+        
+    def Export(self, Filename):
+        if not ExportCSV(self.RecordingTmpFile, Filename):
+            QMessageBox(QMessageBox.Critical, "Fehler", "Speichern der Datei fehlgeschlagen", buttons = QMessageBox.Ok).exec_()
+
+    
+    def SaveFile(self, Filenmame):
+        if not SaveData(self.RecordingTmpFile, self.JointList, self.ReferencePoint, Filenmame):
+            QMessageBox(QMessageBox.Critical, "Fehler", "Speichern der Datei fehlgeschlagen", buttons = QMessageBox.Ok).exec_()
+        else:
+            self.DataSaved = True
+       
+    def LoadFile(self, Filename):
+        data = LoadData(Filename)
+        if data[0] :#Wurde allles korrekt gelesen?
+            self.RecordingTmpFile ,self.JointList, self.ReferencePoint =  data[1]
+            self.Window.playback_radio.setEnabled(True)
+            self.Window.playback_radio.setChecked(True)
+
+        else:
+            QMessageBox(QMessageBox.Critical, "Fehler", "Laden der Datei fehlgeschlagen", buttons = QMessageBox.Ok).exec_()
+            
+    
+    def LiveRadioToggled(self, checked):
+
+        if checked:
+            self.State = 'L'
+            print "Hier auch"
+            self.updateTimer.start(10)
+        
+            
+        return 
+    
+    def PlaybackRadioToggled(self, checked):
+        if checked:
+            self.State = 'S'
+            self.updateTimer.stop()
+            self.PointList = self.RecordingTmpFile[0]
+            self.PlaybackPos = 0
+        return
+        
+        
+        
+    def PlayButtonToggled(self):
+        self.State = "P"
 
         
+    

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'main_window.ui'
 #
-# Created: Sun Apr  6 13:14:53 2014
+# Created: Mon Apr  7 14:14:00 2014
 #      by: PyQt4 UI code generator 4.10.3
 #
 # WARNING! All changes made in this file will be lost!
@@ -93,18 +93,18 @@ class Ui_MainWindow(object):
         self.load_project.setObjectName(_fromUtf8("load_project"))
         self.actionAbout = QtGui.QAction(MainWindow)
         self.actionAbout.setObjectName(_fromUtf8("actionAbout"))
-        self.actionAls_CSV_exportieren = QtGui.QAction(MainWindow)
-        self.actionAls_CSV_exportieren.setObjectName(_fromUtf8("actionAls_CSV_exportieren"))
-        self.actionSpeicheren = QtGui.QAction(MainWindow)
-        self.actionSpeicheren.setObjectName(_fromUtf8("actionSpeicheren"))
+        self.actionExport = QtGui.QAction(MainWindow)
+        self.actionExport.setObjectName(_fromUtf8("actionExport"))
+        self.actionSpeichern = QtGui.QAction(MainWindow)
+        self.actionSpeichern.setObjectName(_fromUtf8("actionSpeichern"))
         self.actionLaden = QtGui.QAction(MainWindow)
         self.actionLaden.setObjectName(_fromUtf8("actionLaden"))
         self.menuWiiMotes.addAction(self.actionVerbinden)
         self.menuWiiMotes.addSeparator()
         self.menuWiiMotes.addAction(self.actionBeenden)
         self.menuInfo.addAction(self.actionAbout)
-        self.menuMessung.addAction(self.actionAls_CSV_exportieren)
-        self.menuMessung.addAction(self.actionSpeicheren)
+        self.menuMessung.addAction(self.actionExport)
+        self.menuMessung.addAction(self.actionSpeichern)
         self.menuMessung.addAction(self.actionLaden)
         self.menubar.addAction(self.menuWiiMotes.menuAction())
         self.menubar.addAction(self.menuMessung.menuAction())
@@ -135,7 +135,7 @@ class Ui_MainWindow(object):
         self.new_project.setText(_translate("MainWindow", "Neue Messung", None))
         self.load_project.setText(_translate("MainWindow", "Messung Laden", None))
         self.actionAbout.setText(_translate("MainWindow", "About", None))
-        self.actionAls_CSV_exportieren.setText(_translate("MainWindow", "Als CSV exportieren", None))
-        self.actionSpeicheren.setText(_translate("MainWindow", "Speicheren", None))
+        self.actionExport.setText(_translate("MainWindow", "Als CSV exportieren", None))
+        self.actionSpeichern.setText(_translate("MainWindow", "Speichern", None))
         self.actionLaden.setText(_translate("MainWindow", "Laden", None))
 

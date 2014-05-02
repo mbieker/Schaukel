@@ -185,8 +185,8 @@
     <property name="title">
      <string>Messung</string>
     </property>
-    <addaction name="actionAls_CSV_exportieren"/>
-    <addaction name="actionSpeicheren"/>
+    <addaction name="actionExport"/>
+    <addaction name="actionSpeichern"/>
     <addaction name="actionLaden"/>
    </widget>
    <addaction name="menuWiiMotes"/>
@@ -225,14 +225,14 @@
     <string>About</string>
    </property>
   </action>
-  <action name="actionAls_CSV_exportieren">
+  <action name="actionExport">
    <property name="text">
     <string>Als CSV exportieren</string>
    </property>
   </action>
-  <action name="actionSpeicheren">
+  <action name="actionSpeichern">
    <property name="text">
-    <string>Speicheren</string>
+    <string>Speichern</string>
    </property>
   </action>
   <action name="actionLaden">

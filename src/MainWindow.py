@@ -9,7 +9,7 @@ from Ui_MainWindow import Ui_MainWindow
 from PyQt4.QtGui import QMainWindow 
 from PyQt4.Qt import QVector2D, QGraphicsView, QMessageBox, QFileDialog
 from GraphicsPanel import GraphPanel
-import MainProgramm
+from MainProgramm import *
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -24,19 +24,27 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.Panel = GraphPanel(self) # Erstellung der Grafikobjekte zum Anzeigen der Punkte
         self.Panel.setDragMode(QGraphicsView.RubberBandDrag)
         self.Panel.setGeometry(30,50,541,434)
-        self.actionVerbinden.triggered.connect(self.MainProgramm.ConnectWiimotes) # Verbinden Menue bereitstellen
+        
+# Verbinden Menue bereitstellen 
+
+        #Datei
+        self.actionVerbinden.triggered.connect(self.MainProgramm.ConnectWiimotes) 
         self.actionBeenden.triggered.connect(self.close) # Butten zum schliessen des Programms
-
+        #Messung 
+        self.actionSpeichern.triggered.connect(self.SaveAction)
+        self.actionLaden.triggered.connect(self.LoadAction)
+        self.actionExport.triggered.connect(self.ExportAction)
         
         
-#Imoprt und Exportknöpfe
+        #Imoprt und Exportknöpfe
         self.rec.hide()
-
-
         self.timeline.hide()
         self.playback_radio.setDisabled(True)
         self.live_radio.setDisabled(True)
-        self.rec.clicked.connect(self.RecButtonToggled)            
+        self.playback_radio.toggled.connect(self.MainProgramm.PlaybackRadioToggled)
+        self.live_radio.toggled.connect(self.MainProgramm.LiveRadioToggled)
+        self.rec.clicked.connect(self.RecButtonToggled)   
+                 
 # sind keine Punkte markiert, werden alle Optionen fuer verbindungen und den Referenzpunkt ausgeblende
         self.calibrate_button.setDisabled(True)
         self.connect_button.setDisabled(True)
@@ -84,16 +92,44 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         
     def RecButtonToggled(self):
         if self.rec.text() == 'Aufnehmen':
-            if not self.MainProgramm.RecordingTmpFile == None:
+            if not self.MainProgramm.DataSaved :
                 msgbox = QMessageBox(QMessageBox.Question, "Frage", "Soll die vorherige Messung ueberschrieben werden ?", QMessageBox.No| QMessageBox.Yes)
-                if msgbox.exec_() == QMessageBox.No:
+                if not msgbox.exec_() == QMessageBox.Yes:
                     return
             self.MainProgramm.StartRecording()
             self.Panel.setRecFrame(True)
             self.rec.setText('Stop')
             
+            
         else:
             self.MainProgramm.StopRecording()
             self.rec.setText("Aufnehmen")
             self.Panel.setRecFrame(False)
+            self.playback_radio.setEnabled(True)
             
+            
+    def SaveAction(self):
+        #Filename zum Speichern vom Benutzer erfragen
+        filename = QFileDialog.getSaveFileName(self, 'Messung Speichern')
+        if not filename == '':
+            self.MainProgramm.SaveFile(filename)
+        
+        
+    def LoadAction(self):
+        if not self.MainProgramm.DataSaved :
+            msgbox = QMessageBox(QMessageBox.Question, "Frage", "Soll die vorherige Messung ueberschrieben werden ?", QMessageBox.No| QMessageBox.Yes)
+            if not msgbox.exec_() == QMessageBox.Yes:
+                return
+        filename = QFileDialog.getOpenFileName(self,"Messung laden")
+        if not filename == '':
+            self.MainProgramm.LoadFile(filename)
+        return
+        
+        
+    
+    def ExportAction(self):
+        filename = QFileDialog.getSaveFileName(self, 'Messung Exportieren')
+        if not filename == '':
+            self.MainProgramm.Export(filename)
+        return
+
