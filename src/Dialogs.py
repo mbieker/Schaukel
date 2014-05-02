@@ -48,7 +48,13 @@ class ConnectDiag(QDialog, Ui_Dialog):
         else:
             self.state_a.setText("Verbunden")
             self.state_a.setStyleSheet('background-color:rgb(0,255,0)')                      
-        
+
+        if(self.device_list[1] == None):
+            self.state_b.setText("Nicht Verbunden")
+            self.state_b.setStyleSheet('background-color:rgb(255, 21, 21)')
+        else:
+            self.state_b.setText("Verbunden")
+            self.state_b.setStyleSheet('background-color:rgb(0,255,0)')          
         self.connect_a.clicked.connect(self.connectA)
         self.connect_b.clicked.connect(self.connectB)
         self.quit.clicked.connect(self.accept)       
@@ -66,7 +72,17 @@ class ConnectDiag(QDialog, Ui_Dialog):
 
         
     def connectB(self):
-        print 'Button B pressed'
+        print 'Button B pressed' 
+        if( self.device_list[1] == None ):            
+            self.thread =ConnectWiiMote(self.state_b, self.quit,self.device_list , 1)
+            self.thread.start()
+        else:
+
+            self.state_b.setText('Nicht Verbunden')
+            self.state_b.setStyleSheet('background-color:rgb(255, 21, 21)')
+            self.device_list[0] = None
+            
+
 
         
     
