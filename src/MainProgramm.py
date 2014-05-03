@@ -10,18 +10,21 @@ steuert.
 '''
 
 import MainWindow
-from PyQt4.Qt import QTimer, QVector2D, QDialog, QMessageBox, QPointF
+from PyQt4.Qt import QTimer, QVector2D, QDialog, QMessageBox, QPointF,\
+    QMainWindow
 import cwiid
 import ExportSave
-from Dialogs import MassRadDiag, ConnectDiag, CalDiag
+from Dialogs import MassRadDiag, ConnectDiag
 from planar import Affine, Vec2
 
 from copy import  copy
 from ExportSave import SaveData, ExportCSV, LoadData
 
+
 class MainProgramm:
     
     PointList = [None]*8
+    PointListWKS = [None]*8
     PointTimeOutList = [5]*8
     JointList = []
     #updateThread = []
@@ -37,14 +40,18 @@ class MainProgramm:
     PlaybackPos = 0 
     
     #Trafos
-    
+    #Urbilder der Trafos
+    BilderA = [None,None,None]
+    BilderB = [None,None,None]    
         #PhysKS-> ViewKS
 
     Phys_View_KS = Affine(200,0,500,0,-200,500)
     
     #MoteKS-> PhysKS
-    M_Phys_KS_A = ~Phys_View_KS
-    M_Phys_KS_B = ~Phys_View_KS
+    M_Phys_KS = [~Phys_View_KS,~Phys_View_KS]
+    
+    M_View_KS = [Affine.identity()]*2
+
     def __init__(self ):
     
 
@@ -68,12 +75,6 @@ class MainProgramm:
                         #Position des Punktes updateten
                         Point = Vec2(data[i]['pos'][0],data[i]['pos'][1])
                         
-                        #Affine Trafo MoteKS -> PhysKS 
-                        if cnt == 0:
-                            Point = self.M_Phys_KS_A * Point
-                        else:
-                            Point = self.M_Phys_KS_B * Point 
-                                                
                         self.PointList[i+4*cnt] = Point
                         self.PointTimeOutList[i+4*cnt] = 0
                     else:
@@ -81,6 +82,7 @@ class MainProgramm:
                         if(self.PointTimeOutList[i+4*cnt] >= 5):
                             self.PointTimeOutList[i+4*cnt] = 5
                             self.PointList[i+4*cnt] = None
+                            self.PointListWKS[i+4*cnt] = None
                         else:
                             self.PointTimeOutList[i+4*cnt] += 1
                 cnt += 1
@@ -128,7 +130,7 @@ class MainProgramm:
         for i in range(8):
             if not self.PointList[i] == None:
                 #Affine Trafo PhysKS -> View KS
-                Point = self.PointList[i]*self.Phys_View_KS
+                Point =  self.PointList[i]* self.M_View_KS[i/4]
                 PointsToDraw.append(QPointF(Point.x,Point.y))
                 IDstoDraw.append(i)
             else:
@@ -248,21 +250,37 @@ class MainProgramm:
     def PlayButtonToggled(self):
         self.State = "P"
 
-    def SetKSTrafo(self,origin, e_1, e_2, device_id):
-        m13 = origin.x
-        m23= origin.y
-        m11 = e_1.x-origin.x
-        m21 = e_1.y - origin.y
-        m12 = e_2.x -origin.x
-        m22 = e_2.y - origin.y
+    def SetKSTrafo(self, device_id):      
+        Bilder = [self.BilderA,self.BilderB]
         
-        if device_id == origin.x:
-            self.M_Phys_KS_A = ~Affine(m11,m12,m13,m21,m22,m23)
+        #Matrix Elemente Bestimmen
+        m13 = Bilder[device_id][0].x
+        m23 = Bilder[device_id][0].y 
+        e_x = Bilder[device_id][1]-Bilder[device_id][0]
+        e_y =   Bilder[device_id][2]-Bilder[device_id][0]     
+        
+        m11 = e_x.x
+        m21 = e_x.y
+        
+        m12 = e_y.x
+        m22 = e_y.y
+        self.M_Phys_KS[device_id] = ~Affine(m11,m12,m13,m21,m22,m23) 
+        self.M_View_KS[device_id] = self.Phys_View_KS*self.M_Phys_KS[device_id]     
+    def AddCalPoint(self, Point, Type):
+        ID = Point.ID()
+        #Punkte in die Datenbank aufnehmen
+        vector = Vec2(self.PointList[ID].x,self.PointList[ID].y)
+        print vector
+        if ID <4:
+            self.BilderA[Type] = vector
+            print self.BilderA.count(None) 
+            if self.BilderA.count(None) == 0:
+                self.Window.cal_state_A.setText('Kalibriert')
+                self.SetKSTrafo(0)
         else:
-            self.M_Phys_KS_B = ~Affine(m11,m12,m13,m21,m22,m23)       
-        return 
+            self.BilderB[Type] = vector         
+            if self.BilderB.count(None) == 0:
+                self.Window.cal_state_B.setText('Kalibriert')
+                self.SetKSTrafo(1)            
         
     
-    def Calibrate(self):
-        diag = CalDiag(self)
-        diag.show()

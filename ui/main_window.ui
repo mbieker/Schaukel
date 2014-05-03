@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>843</width>
+    <width>934</width>
     <height>600</height>
    </rect>
   </property>
@@ -57,24 +57,63 @@
     <property name="geometry">
      <rect>
       <x>600</x>
-      <y>40</y>
-      <width>181</width>
-      <height>81</height>
+      <y>20</y>
+      <width>361</width>
+      <height>131</height>
      </rect>
     </property>
     <property name="title">
      <string>Eichung</string>
     </property>
-    <widget class="QWidget" name="verticalLayoutWidget_3">
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="geometry">
+      <rect>
+       <x>380</x>
+       <y>180</y>
+       <width>241</width>
+       <height>131</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Messung</string>
+     </property>
+     <widget class="QPushButton" name="rec">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>60</y>
+        <width>98</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Aufnehmen</string>
+      </property>
+     </widget>
+     <widget class="QSlider" name="timeline">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>100</y>
+        <width>231</width>
+        <height>19</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="verticalLayoutWidget">
      <property name="geometry">
       <rect>
        <x>10</x>
        <y>30</y>
-       <width>161</width>
-       <height>42</height>
+       <width>179</width>
+       <height>89</height>
       </rect>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_4">
+     <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <widget class="QLabel" name="cal_state_A">
         <property name="styleSheet">
@@ -95,46 +134,32 @@
         </property>
        </widget>
       </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QPushButton" name="cal_O">
+          <property name="text">
+           <string>O</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="cal_X">
+          <property name="text">
+           <string>X</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="cal_Y">
+          <property name="text">
+           <string>Y</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
      </layout>
-    </widget>
-   </widget>
-   <widget class="QGroupBox" name="groupBox_3">
-    <property name="geometry">
-     <rect>
-      <x>610</x>
-      <y>290</y>
-      <width>171</width>
-      <height>131</height>
-     </rect>
-    </property>
-    <property name="title">
-     <string>Messung</string>
-    </property>
-    <widget class="QPushButton" name="rec">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>60</y>
-       <width>98</width>
-       <height>27</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Aufnehmen</string>
-     </property>
-    </widget>
-    <widget class="QSlider" name="timeline">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>100</y>
-       <width>160</width>
-       <height>19</height>
-      </rect>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
     </widget>
    </widget>
    <widget class="QRadioButton" name="live_radio">
@@ -169,7 +194,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>843</width>
+     <width>934</width>
      <height>25</height>
     </rect>
    </property>

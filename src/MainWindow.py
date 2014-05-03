@@ -17,9 +17,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     Panel = 0
     prevCoM = QVector2D(0,0)
     currCoM = QVector2D(0,0)
-    def __init__(self,MainPorgramm=None):
+    def __init__(self,MainProgramm=None):
         QMainWindow.__init__(self)
-        self.MainProgramm = MainPorgramm # Referenz zum Hauptprogramm speichern.
+        self.MainProgramm = MainProgramm # Referenz zum Hauptprogramm speichern.
         self.setupUi(self)
         self.Panel = GraphPanel(self) # Erstellung der Grafikobjekte zum Anzeigen der Punkte
         self.Panel.setDragMode(QGraphicsView.RubberBandDrag)
@@ -51,9 +51,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.connect_button.pressed.connect(self.ConnectButtonPressed)
         self.ref_point_button.setEnabled(False)
         self.ref_point_button.pressed.connect(self.SelectRefPointButtonPressed)
-        
-        self.actionCal.triggered.connect(self.MainProgramm.Calibrate)
-    
+        self.cal_O.setDisabled(True)
+        self.cal_O.pressed.connect(self.CalOToggeld)
+        self.cal_X.setDisabled(True)
+        self.cal_X.pressed.connect(self.CalXToggeld)
+        self.cal_Y.setDisabled(True)
+        self.cal_Y.pressed.connect(self.CalYToggeld)   
     def PointSelected(self):
         #Diese Funktion wird aufgerufen wenn im Grafikpanel ein oder mehrere Punkte makiert wurden.
         #sind es 2 kann eine Verbindung erstellt oder geloescht werden. ist es einer gibt es eine
@@ -77,9 +80,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.connect_button.setDisabled(True)  
             if(len(self.Panel.scene.selectedItems()) == 1):
                 self.ref_point_button.setEnabled(True)
+                self.cal_O.setEnabled(True)
+                self.cal_X.setEnabled(True)
+                self.cal_Y.setEnabled(True)
             else:
                 self.ref_point_button.setEnabled(False)
-               
+                self.cal_O.setEnabled(False)
+                self.cal_X.setEnabled(False)
+                self.cal_Y.setEnabled(False)               
 
             
     def ConnectButtonPressed(self):
@@ -134,4 +142,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if not filename == '':
             self.MainProgramm.Export(filename)
         return
+    
+    def CalOToggeld(self):
+        self.MainProgramm.AddCalPoint(self.Panel.scene.selectedItems()[0],0)     
+        return
 
+    def CalXToggeld(self):
+        self.MainProgramm.AddCalPoint(self.Panel.scene.selectedItems()[0],1)    
+    
+    def CalYToggeld(self):
+        self.MainProgramm.AddCalPoint(self.Panel.scene.selectedItems()[0],2)    

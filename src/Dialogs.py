@@ -4,13 +4,14 @@ Created on 07.03.2014
 @author: martin
 '''
 
-from PyQt4.Qt import QDialog
+from PyQt4.Qt import QDialog, QMdiArea , QWidget, Qt, QWizardPage, QDockWidget, QGraphicsOpacityEffect,\
+    QMainWindow, QMouseEvent
 from numpy  import pi
 from Ui_MassRadDiag import Ui_MassRadDialog
 from Ui_ConnectDiag import *
 from WiiMoteConnect import *
-
-import Ui_CalDiag
+from Ui_CalDiag import Ui_DockWidget
+from matplotlib.backend_bases import MouseEvent
 
 
 class MassRadDiag(Ui_MassRadDialog,QDialog):
@@ -85,13 +86,7 @@ class ConnectDiag(QDialog, Ui_Dialog):
             self.device_list[1] = None
             
 
+None
 
-class CalDiag(Ui_CalDiag.Ui_Dialog):
-    def __init__(self, parent):
-
-        Ui_CalDiag.Ui_Dialog.__init__(self)
-        self.setupUi(self)
-        self.parent = parent
-
-              
+        
     
