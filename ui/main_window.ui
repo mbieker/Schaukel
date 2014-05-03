@@ -59,7 +59,7 @@
       <x>600</x>
       <y>40</y>
       <width>181</width>
-      <height>111</height>
+      <height>81</height>
      </rect>
     </property>
     <property name="title">
@@ -70,22 +70,28 @@
       <rect>
        <x>10</x>
        <y>30</y>
-       <width>160</width>
-       <height>80</height>
+       <width>161</width>
+       <height>42</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_4">
       <item>
-       <widget class="QLabel" name="scale_label">
+       <widget class="QLabel" name="cal_state_A">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(255, 0, 0);</string>
+        </property>
         <property name="text">
-         <string>Massstab: ?? px/m</string>
+         <string>WM A nicht kalibriert</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="calibrate_button">
+       <widget class="QLabel" name="cal_state_B">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(255, 0, 4);</string>
+        </property>
         <property name="text">
-         <string>Kalibieren</string>
+         <string>WM B nicht kalibriert</string>
         </property>
        </widget>
       </item>
@@ -177,8 +183,9 @@
    </widget>
    <widget class="QMenu" name="menuInfo">
     <property name="title">
-     <string>Info</string>
+     <string>Einstellungen</string>
     </property>
+    <addaction name="actionCal"/>
     <addaction name="actionAbout"/>
    </widget>
    <widget class="QMenu" name="menuMessung">
@@ -238,6 +245,11 @@
   <action name="actionLaden">
    <property name="text">
     <string>Laden</string>
+   </property>
+  </action>
+  <action name="actionCal">
+   <property name="text">
+    <string>Kalibrieren</string>
    </property>
   </action>
  </widget>

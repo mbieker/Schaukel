@@ -46,11 +46,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.rec.clicked.connect(self.RecButtonToggled)   
                  
 # sind keine Punkte markiert, werden alle Optionen fuer verbindungen und den Referenzpunkt ausgeblende
-        self.calibrate_button.setDisabled(True)
+
         self.connect_button.setDisabled(True)
         self.connect_button.pressed.connect(self.ConnectButtonPressed)
         self.ref_point_button.setEnabled(False)
         self.ref_point_button.pressed.connect(self.SelectRefPointButtonPressed)
+        
+        self.actionCal.triggered.connect(self.MainProgramm.Calibrate)
     
     def PointSelected(self):
         #Diese Funktion wird aufgerufen wenn im Grafikpanel ein oder mehrere Punkte makiert wurden.
@@ -59,7 +61,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if len(self.Panel.scene.selectedItems()) == 2:
                 PointSet = set([i.ID() for i in self.Panel.scene.selectedItems()])
                 self.connect_button.setDisabled(False)
-                self.calibrate_button.setDisabled(False)
+
                 AllreadyConnected = False
                 for joint in self.MainProgramm.JointList:
                     if(PointSet == joint[0]):
@@ -71,7 +73,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     
                 
         else:
-            self.calibrate_button.setDisabled(True)
+
             self.connect_button.setDisabled(True)  
             if(len(self.Panel.scene.selectedItems()) == 1):
                 self.ref_point_button.setEnabled(True)

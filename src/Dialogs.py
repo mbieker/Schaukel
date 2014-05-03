@@ -10,6 +10,8 @@ from Ui_MassRadDiag import Ui_MassRadDialog
 from Ui_ConnectDiag import *
 from WiiMoteConnect import *
 
+import Ui_CalDiag
+
 
 class MassRadDiag(Ui_MassRadDialog,QDialog):
     def __init__(self, parent = None):
@@ -80,9 +82,16 @@ class ConnectDiag(QDialog, Ui_Dialog):
 
             self.state_b.setText('Nicht Verbunden')
             self.state_b.setStyleSheet('background-color:rgb(255, 21, 21)')
-            self.device_list[0] = None
+            self.device_list[1] = None
             
 
 
-        
+class CalDiag(Ui_CalDiag.Ui_Dialog):
+    def __init__(self, parent):
+
+        Ui_CalDiag.Ui_Dialog.__init__(self)
+        self.setupUi(self)
+        self.parent = parent
+
+              
     

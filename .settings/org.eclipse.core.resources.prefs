@@ -1,6 +1,7 @@
 eclipse.preferences.version=1
 encoding//src/MainProgramm.py=utf-8
 encoding//src/MainWindow.py=utf-8
+encoding//src/Ui_CalDiag.py=utf-8
 encoding//src/Ui_ConnectDiag.py=utf-8
 encoding//src/Ui_MainWindow.py=utf-8
 encoding//src/main.py=utf-8

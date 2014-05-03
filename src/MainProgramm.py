@@ -13,7 +13,7 @@ import MainWindow
 from PyQt4.Qt import QTimer, QVector2D, QDialog, QMessageBox, QPointF
 import cwiid
 import ExportSave
-from Dialogs import MassRadDiag, ConnectDiag
+from Dialogs import MassRadDiag, ConnectDiag, CalDiag
 from planar import Affine, Vec2
 
 from copy import  copy
@@ -263,3 +263,6 @@ class MainProgramm:
         return 
         
     
+    def Calibrate(self):
+        diag = CalDiag(self)
+        diag.show()
