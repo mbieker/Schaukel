@@ -10,10 +10,11 @@ steuert.
 '''
 
 import MainWindow
-from PyQt4.Qt import QTimer, QVector2D, QDialog, QMessageBox
+from PyQt4.Qt import QTimer, QVector2D, QDialog, QMessageBox, QPointF
 import cwiid
 import ExportSave
 from Dialogs import MassRadDiag, ConnectDiag
+from planar import Affine, Vec2
 
 from copy import  copy
 from ExportSave import SaveData, ExportCSV, LoadData
@@ -34,7 +35,16 @@ class MainProgramm:
     DataSaved = True
     State = "S" # S-Stop/Pause , P-Play , L-Live(Record) 
     PlaybackPos = 0 
+    
+    #Trafos
+    
+        #PhysKS-> ViewKS
 
+    Phys_View_KS = Affine(200,0,500,0,-200,500)
+    
+    #MoteKS-> PhysKS
+    M_Phys_KS_A = ~Phys_View_KS
+    M_Phys_KS_B = ~Phys_View_KS
     def __init__(self ):
     
 
@@ -56,7 +66,15 @@ class MainProgramm:
                 for i in range(0,4):
                     if not data[i] == None:
                         #Position des Punktes updateten
-                        self.PointList[i+4*cnt] = QVector2D(data[i]['pos'][0],data[i]['pos'][1])
+                        Point = Vec2(data[i]['pos'][0],data[i]['pos'][1])
+                        
+                        #Affine Trafo MoteKS -> PhysKS 
+                        if cnt == 0:
+                            Point = self.M_Phys_KS_A * Point
+                        else:
+                            Point = self.M_Phys_KS_B * Point 
+                                                
+                        self.PointList[i+4*cnt] = Point
                         self.PointTimeOutList[i+4*cnt] = 0
                     else:
                         #Punkt Connection Lost counter
@@ -109,7 +127,9 @@ class MainProgramm:
         IDstoDraw = []
         for i in range(8):
             if not self.PointList[i] == None:
-                PointsToDraw.append(self.PointList[i].toPointF())
+                #Affine Trafo PhysKS -> View KS
+                Point = self.PointList[i]*self.Phys_View_KS
+                PointsToDraw.append(QPointF(Point.x,Point.y))
                 IDstoDraw.append(i)
             else:
                 PointsToDraw.append(None)
@@ -228,5 +248,18 @@ class MainProgramm:
     def PlayButtonToggled(self):
         self.State = "P"
 
+    def SetKSTrafo(self,origin, e_1, e_2, device_id):
+        m13 = origin.x
+        m23= origin.y
+        m11 = e_1.x-origin.x
+        m21 = e_1.y - origin.y
+        m12 = e_2.x -origin.x
+        m22 = e_2.y - origin.y
+        
+        if device_id == origin.x:
+            self.M_Phys_KS_A = ~Affine(m11,m12,m13,m21,m22,m23)
+        else:
+            self.M_Phys_KS_B = ~Affine(m11,m12,m13,m21,m22,m23)       
+        return 
         
     

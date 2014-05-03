@@ -45,7 +45,7 @@ class GraphPanel(QGraphicsView):
         QGraphicsView.__init__(self,parent)
         self.scene = QGraphicsScene(self)
         self.scale(0.5,0.5)
-        self.frame = self.scene.addRect(0,0,1024,786)
+        self.frame = self.scene.addRect(-20,-20,1044,808)
         self.setScene(self.scene)
         self.PointList = [] 
         for i in range(8):
@@ -57,8 +57,15 @@ class GraphPanel(QGraphicsView):
         self.CoM = QGraphicsEllipseItem(scene = self.scene)
         self.CoM.setRect(QRectF(-10,-10,20,20))
         self.CoM.setBrush(QBrush(Qt.red))
-    
-
+        
+        
+        #Koordinatensystem zeichen
+        self.Origin = QGraphicsEllipseItem(scene = self.scene)
+        self.Origin.setRect(QRectF(-5,-5,10,10))
+        self.Origin.setBrush(QBrush(Qt.black))
+        self.Origin.setPos(500,500) 
+        self.scene.addLine(QLineF(500,500,700,500),QPen(Qt.red))      
+        self.scene.addLine(QLineF(500,500,500,300),QPen(Qt.green)) 
     def redraw(self,newPointList, newJointList, newCoM = None):
         
         
