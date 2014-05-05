@@ -283,4 +283,23 @@ class MainProgramm:
                 self.Window.cal_state_B.setText('Kalibriert')
                 self.SetKSTrafo(1)            
         
+    def Homography(self, Urbilder,Bilder):        
+        A = zeros((4*2,8))
+        B = zeros((4*2,1))
+        for i in range(0,4):
+            A[2*i][0:2] = Urbilder[i]
+            A[2*i][2] = 1
+            A[2*i][6] = -Urbilder[i][0]*Bilder[i][0]
+            A[2*i][7] = -Urbilder[i][1]*Bilder[i][0]
+            A[2*i+1][3:5] = Urbilder[i]
+            A[2*i+1][5] = 1
+            A[2*i+1][6] = -Urbilder[i][0]*Bilder[i][1]
+            A[2*i+1][7] = -Urbilder[i][1]*Bilder[i][1]
+            B[2*i] = Bilder[i][0]
+            B[2*i+1] = Bilder[i][1]
+        
+        X = linalg.lstsq(A,B)
+        return reshape(vstack((X[0],[1])),(3,3))
+
+
     

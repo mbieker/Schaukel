@@ -151,4 +151,5 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.MainProgramm.AddCalPoint(self.Panel.scene.selectedItems()[0],1)    
     
     def CalYToggeld(self):
-        self.MainProgramm.AddCalPoint(self.Panel.scene.selectedItems()[0],2)    
+        self.MainProgramm.AddCalPoint(self.Panel.scene.selectedItems()[0],2)
+        
