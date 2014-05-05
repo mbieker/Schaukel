@@ -1,4 +1,3 @@
+from numpy import array
 
-t = [None,5,1]
-
-print 3-t.count(None)
+h = arr

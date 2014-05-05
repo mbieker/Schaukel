@@ -12,23 +12,20 @@ steuert.
 import MainWindow
 from PyQt4.Qt import QTimer, QVector2D, QDialog, QMessageBox, QPointF,\
     QMainWindow
-import cwiid
-import ExportSave
-from Dialogs import MassRadDiag, ConnectDiag
-from planar import Affine, Vec2
 
+from Dialogs import MassRadDiag, ConnectDiag
+from numpy import matrix, identity, linalg, zeros, reshape, vstack
+import numpy
 from copy import  copy
 from ExportSave import SaveData, ExportCSV, LoadData
-
+import cwiid
 
 class MainProgramm:
     
     PointList = [None]*8
-    PointListWKS = [None]*8
     PointTimeOutList = [5]*8
     JointList = []
     #updateThread = []
-
     ReferencePoint = None
     TrackReferencePoint = None
     device_list = [None,None]
@@ -41,17 +38,15 @@ class MainProgramm:
     
     #Trafos
     #Urbilder der Trafos
-    BilderA = [None,None,None]
-    BilderB = [None,None,None]    
-        #PhysKS-> ViewKS
+    BilderA = [None]*4
+    BilderB = [None]*4   
+    #PhysKS-> ViewKS
 
-    Phys_View_KS = Affine(200,0,500,0,-200,500)
-    
+    Phys_View_KS = matrix([[200.0,0.0,500.0],[0.0,-200.0,500.0],[0.0,0.0,1.0]])
     #MoteKS-> PhysKS
-    M_Phys_KS = [~Phys_View_KS,~Phys_View_KS]
+    M_Phys_KS = [Phys_View_KS**-1,Phys_View_KS**-1]
+    M_View_KS = [matrix(identity(3)),matrix(identity(3))]
     
-    M_View_KS = [Affine.identity()]*2
-
     def __init__(self ):
     
 
@@ -73,8 +68,7 @@ class MainProgramm:
                 for i in range(0,4):
                     if not data[i] == None:
                         #Position des Punktes updateten
-                        Point = Vec2(data[i]['pos'][0],data[i]['pos'][1])
-                        
+                        Point =  HomPoint(data[i]['pos'][0]*1.0,data[i]['pos'][1]*1.0)
                         self.PointList[i+4*cnt] = Point
                         self.PointTimeOutList[i+4*cnt] = 0
                     else:
@@ -82,7 +76,6 @@ class MainProgramm:
                         if(self.PointTimeOutList[i+4*cnt] >= 5):
                             self.PointTimeOutList[i+4*cnt] = 5
                             self.PointList[i+4*cnt] = None
-                            self.PointListWKS[i+4*cnt] = None
                         else:
                             self.PointTimeOutList[i+4*cnt] += 1
                 cnt += 1
@@ -129,9 +122,9 @@ class MainProgramm:
         IDstoDraw = []
         for i in range(8):
             if not self.PointList[i] == None:
-                #Affine Trafo PhysKS -> View KS
-                Point =  self.PointList[i]* self.M_View_KS[i/4]
-                PointsToDraw.append(QPointF(Point.x,Point.y))
+                # Trafo PhysKS -> View KS
+                Point =   self.M_View_KS[i/4]*self.PointList[i]
+                PointsToDraw.append(QPointF(Point.item(0),Point.item(1)))
                 IDstoDraw.append(i)
             else:
                 PointsToDraw.append(None)
@@ -139,7 +132,7 @@ class MainProgramm:
                 for joint in self.JointList:
                     if set(IDstoDraw) >= joint[0]:
                         JointsToDraw.append(joint)            
-        self.Window.Panel.redraw(PointsToDraw,JointsToDraw, self.DoPhysics())
+        self.Window.Panel.redraw(PointsToDraw,[], self.DoPhysics())
 
  
     def update_device_list(self):
@@ -203,7 +196,7 @@ class MainProgramm:
         self.recording = False
         self.DataSaved = False
 
-        ExportSave.ExportCSV(self.RecordingTmpFile,'test1.csv')
+        ExportCSV(self.RecordingTmpFile,'test1.csv')
         
     def Export(self, Filename):
         if not ExportCSV(self.RecordingTmpFile, Filename):
@@ -251,55 +244,85 @@ class MainProgramm:
         self.State = "P"
 
     def SetKSTrafo(self, device_id):      
-        Bilder = [self.BilderA,self.BilderB]
         
-        #Matrix Elemente Bestimmen
-        m13 = Bilder[device_id][0].x
-        m23 = Bilder[device_id][0].y 
-        e_x = Bilder[device_id][1]-Bilder[device_id][0]
-        e_y =   Bilder[device_id][2]-Bilder[device_id][0]     
+        unit =  [(0,0),(1,0),(0,1),(1,1)]
+        bild = []
+        if device_id == 0:
+            for point in self.BilderA:
+                bild.append((point.x(),point.y()))
+        else:
+            for point in self.BilderB:
+                bild.append((point.x(),point.y()))
+                        
         
-        m11 = e_x.x
-        m21 = e_x.y
         
-        m12 = e_y.x
-        m22 = e_y.y
-        self.M_Phys_KS[device_id] = ~Affine(m11,m12,m13,m21,m22,m23) 
-        self.M_View_KS[device_id] = self.Phys_View_KS*self.M_Phys_KS[device_id]     
+        self.M_Phys_KS[device_id] = Homography( bild,unit)
+        self.M_View_KS[device_id] = self.Phys_View_KS* self.M_Phys_KS[0]
+        print self.M_Phys_KS[device_id]
     def AddCalPoint(self, Point, Type):
         ID = Point.ID()
         #Punkte in die Datenbank aufnehmen
-        vector = Vec2(self.PointList[ID].x,self.PointList[ID].y)
+        vector = self.PointList[ID]
         print vector
         if ID <4:
             self.BilderA[Type] = vector
             print self.BilderA.count(None) 
             if self.BilderA.count(None) == 0:
                 self.Window.cal_state_A.setText('Kalibriert')
+                print self.BilderA
                 self.SetKSTrafo(0)
         else:
             self.BilderB[Type] = vector         
             if self.BilderB.count(None) == 0:
                 self.Window.cal_state_B.setText('Kalibriert')
                 self.SetKSTrafo(1)            
-        
-    def Homography(self, Urbilder,Bilder):        
-        A = zeros((4*2,8))
-        B = zeros((4*2,1))
-        for i in range(0,4):
-            A[2*i][0:2] = Urbilder[i]
-            A[2*i][2] = 1
-            A[2*i][6] = -Urbilder[i][0]*Bilder[i][0]
-            A[2*i][7] = -Urbilder[i][1]*Bilder[i][0]
-            A[2*i+1][3:5] = Urbilder[i]
-            A[2*i+1][5] = 1
-            A[2*i+1][6] = -Urbilder[i][0]*Bilder[i][1]
-            A[2*i+1][7] = -Urbilder[i][1]*Bilder[i][1]
-            B[2*i] = Bilder[i][0]
-            B[2*i+1] = Bilder[i][1]
-        
-        X = linalg.lstsq(A,B)
-        return reshape(vstack((X[0],[1])),(3,3))
 
+    def resetA(self):
+        self.M_Phys_KS[0] = None
+        self.M_View_KS[0] = identity(3)
+        self.BilderA = [None]*4
+
+    def resetB(self):
+        self.M_Phys_KS[1] = None
+        self.M_View_KS[1] = identity(3)   
+        self.BilderB = [None]*4    
+        
+        
 
     
+        
+   
+class HomPoint(matrix): 
+    def __new__(self, x,y):
+        return matrix.__new__(self,[[x],[y],[1]])
+
+    def x(self):
+        return self.item(0)/self.item(2)
+    def y(self):
+        return self.item(1)/self.item(2)   
+
+def Homography( Urbilder,Bilder):        
+    A = zeros((4*2,8))
+    B = zeros((4*2,1))
+    for i in range(0,4):
+        A[2*i][0:2] = Urbilder[i]
+        A[2*i][2] = 1
+        A[2*i][6] = -Urbilder[i][0]*Bilder[i][0]
+        A[2*i][7] = -Urbilder[i][1]*Bilder[i][0]
+        A[2*i+1][3:5] = Urbilder[i]
+        A[2*i+1][5] = 1
+        A[2*i+1][6] = -Urbilder[i][0]*Bilder[i][1]
+        A[2*i+1][7] = -Urbilder[i][1]*Bilder[i][1]
+        B[2*i] = Bilder[i][0]
+        B[2*i+1] = Bilder[i][1]
+
+    X = linalg.lstsq(A,B)
+    return reshape(vstack((X[0],[1])),(3,3))
+
+
+class HomTransfrom(matrix):
+    def __new__(self, *args, **kwargs):
+        return matrix.__new__(self, *args, **kwargs)
+    def __mul__(self, *args, **kwargs):
+        erg = matrix.__mul__(self, *args, **kwargs)
+        return matrix([erg.item(0)/erg.item(2),erg.item(1)/erg.item(2)]).T
