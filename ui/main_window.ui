@@ -18,7 +18,7 @@
     <property name="geometry">
      <rect>
       <x>600</x>
-      <y>160</y>
+      <y>180</y>
       <width>181</width>
       <height>111</height>
      </rect>
@@ -59,7 +59,7 @@
       <x>600</x>
       <y>20</y>
       <width>361</width>
-      <height>131</height>
+      <height>141</height>
      </rect>
     </property>
     <property name="title">
@@ -77,19 +77,6 @@
      <property name="title">
       <string>Messung</string>
      </property>
-     <widget class="QPushButton" name="rec">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>60</y>
-        <width>98</width>
-        <height>27</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Aufnehmen</string>
-      </property>
-     </widget>
      <widget class="QSlider" name="timeline">
       <property name="geometry">
        <rect>
@@ -109,8 +96,8 @@
       <rect>
        <x>10</x>
        <y>30</y>
-       <width>179</width>
-       <height>89</height>
+       <width>180</width>
+       <height>110</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
@@ -135,31 +122,64 @@
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QPushButton" name="cal_O">
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="1" column="0">
+         <widget class="QPushButton" name="cal_00">
           <property name="text">
-           <string>O</string>
+           <string>(0,0)</string>
           </property>
          </widget>
         </item>
-        <item>
-         <widget class="QPushButton" name="cal_X">
+        <item row="1" column="1">
+         <widget class="QPushButton" name="cal_10">
           <property name="text">
-           <string>X</string>
+           <string>(1,0)</string>
           </property>
          </widget>
         </item>
-        <item>
-         <widget class="QPushButton" name="cal_Y">
+        <item row="0" column="0">
+         <widget class="QPushButton" name="cal_01">
           <property name="text">
-           <string>Y</string>
+           <string>(0,1)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QPushButton" name="cal_11">
+          <property name="text">
+           <string>(1,1)</string>
           </property>
          </widget>
         </item>
        </layout>
       </item>
      </layout>
+    </widget>
+    <widget class="QPushButton" name="reset_A">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>30</y>
+       <width>21</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>X</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="reset_B">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>50</y>
+       <width>21</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>X</string>
+     </property>
     </widget>
    </widget>
    <widget class="QRadioButton" name="live_radio">
@@ -186,6 +206,19 @@
     </property>
     <property name="text">
      <string>Widergabe</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="rec">
+    <property name="geometry">
+     <rect>
+      <x>620</x>
+      <y>340</y>
+      <width>98</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Aufnehmen</string>
     </property>
    </widget>
   </widget>

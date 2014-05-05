@@ -51,12 +51,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.connect_button.pressed.connect(self.ConnectButtonPressed)
         self.ref_point_button.setEnabled(False)
         self.ref_point_button.pressed.connect(self.SelectRefPointButtonPressed)
-        self.cal_O.setDisabled(True)
-        self.cal_O.pressed.connect(self.CalOToggeld)
-        self.cal_X.setDisabled(True)
-        self.cal_X.pressed.connect(self.CalXToggeld)
-        self.cal_Y.setDisabled(True)
-        self.cal_Y.pressed.connect(self.CalYToggeld)   
+        self.cal_00.setDisabled(True)
+        self.cal_00.pressed.connect(self.Cal00Toggeld)
+        self.cal_10.setDisabled(True)
+        self.cal_10.pressed.connect(self.Cal10Toggeld)
+        self.cal_01.setDisabled(True)
+        self.cal_01.pressed.connect(self.Cal01Toggeld) 
+        self.cal_11.setDisabled(True)
+        self.cal_11.pressed.connect(self.Cal11Toggeld)    
+        self.reset_A.pressed.connect(self.MainProgramm.resetA)
+        self.reset_B.pressed.connect(self.MainProgramm.resetB)
     def PointSelected(self):
         #Diese Funktion wird aufgerufen wenn im Grafikpanel ein oder mehrere Punkte makiert wurden.
         #sind es 2 kann eine Verbindung erstellt oder geloescht werden. ist es einer gibt es eine
@@ -80,16 +84,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.connect_button.setDisabled(True)  
             if(len(self.Panel.scene.selectedItems()) == 1):
                 self.ref_point_button.setEnabled(True)
-                self.cal_O.setEnabled(True)
-                self.cal_X.setEnabled(True)
-                self.cal_Y.setEnabled(True)
+                self.cal_00.setEnabled(True)
+                self.cal_10.setEnabled(True)
+                self.cal_01.setEnabled(True)
+                self.cal_11.setEnabled(True)
             else:
                 self.ref_point_button.setEnabled(False)
-                self.cal_O.setEnabled(False)
-                self.cal_X.setEnabled(False)
-                self.cal_Y.setEnabled(False)               
-
-            
+                self.cal_00.setEnabled(False)
+                self.cal_10.setEnabled(False)
+                self.cal_01.setEnabled(False)
+                self.cal_11.setEnabled(False)
+                            
     def ConnectButtonPressed(self):
         if(self.connect_button.text() == "Punkte Verbinden"):
             self.MainProgramm.CreateJoint(self.Panel.scene.selectedItems())
@@ -143,12 +148,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.MainProgramm.Export(filename)
         return
     
-    def CalOToggeld(self):
+    def Cal00Toggeld(self):
         self.MainProgramm.AddCalPoint(self.Panel.scene.selectedItems()[0],0)     
         return
 
-    def CalXToggeld(self):
+    def Cal10Toggeld(self):
         self.MainProgramm.AddCalPoint(self.Panel.scene.selectedItems()[0],1)    
     
-    def CalYToggeld(self):
-        self.MainProgramm.AddCalPoint(self.Panel.scene.selectedItems()[0],2)    
+    def Cal01Toggeld(self):
+        self.MainProgramm.AddCalPoint(self.Panel.scene.selectedItems()[0],2)   
+    def Cal11Toggeld(self):
+        self.MainProgramm.AddCalPoint(self.Panel.scene.selectedItems()[0],3)  
+    
