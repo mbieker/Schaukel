@@ -127,9 +127,23 @@ V_ges = array([sqrt(v[0]**2+v[1]**2) for v in V_CoM])
 #plot(time,sqrt(R_quad)-sqrt(R_quad[0]))
 plot(CoMx,CoMy,'x')
 
+import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
 
+def update_line(num, data, line):
+    line.set_data(data[...,:num])
+    return line,
+
+fig1 = plt.figure()
+
+
+l, = plt.plot([], [], 'r-')
+plt.xlim(0, 1)
+plt.ylim(0, 1)
+plt.xlabel('x')
+plt.title('test')
+line_ani = animation.FuncAnimation(fig1, update_line, 25, fargs=(CoM.T, l),
+    interval=50, blit=True)
+#line_ani.save('lines.mp4')
 show()
-
-
-        
-
