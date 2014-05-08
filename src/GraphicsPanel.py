@@ -5,7 +5,7 @@ from PyQt4.QtGui import *
   
 class Point(QGraphicsEllipseItem):
     
-    colorlist = [Qt.red,Qt.green,Qt.yellow, Qt.blue, Qt.lightGray, Qt.black, Qt.cyan, Qt.magenta]
+    colorlist = [ Qt.lightGray]*4+[ Qt.black]*4
     point_id = 0
     
     def __init__(self,parent,scene,PointId):

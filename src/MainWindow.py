@@ -74,7 +74,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     if(PointSet == joint[0]):
                         AllreadyConnected = True
                 if AllreadyConnected:
-                    self.connect_button.setText('Verbindung entferenen')
+                    self.connect_button.setText('Verbindung entfernen')
                 else:
                     self.connect_button.setText("Punkte Verbinden")
                     
@@ -160,4 +160,5 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def Cal11Toggeld(self):
         self.MainProgramm.AddCalPoint(self.Panel.scene.selectedItems()[0],3)  
     
-
+    def setEnergies(self, KE, V):
+        print KE, V

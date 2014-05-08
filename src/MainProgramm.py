@@ -35,7 +35,7 @@ class MainProgramm:
     DataSaved = True
     State = "S" # S-Stop/Pause , P-Play , L-Live(Record) 
     PlaybackPos = 0 
-    
+    CoM = QVector2D(0,0)
     #Trafos
     #Urbilder der Trafos
     BilderA = [None]*4
@@ -123,16 +123,19 @@ class MainProgramm:
         for i in range(8):
             if not self.PointList[i] == None:
                 # Trafo PhysKS -> View KS
-                Point =   self.M_View_KS[i/4]*self.PointList[i]
-                PointsToDraw.append(QPointF(Point.item(0),Point.item(1)))
+                if i < 4:
+                    Point =   self.M_View_KS[0]*self.PointList[i]
+                else:
+                    Point =   self.M_View_KS[1]*self.PointList[i]                    
+                PointsToDraw.append(QPointF(Point.item(0)/Point.item(2),Point.item(1)/Point.item(2)))
                 IDstoDraw.append(i)
             else:
                 PointsToDraw.append(None)
                 JointsToDraw = []
-                for joint in self.JointList:
-                    if set(IDstoDraw) >= joint[0]:
-                        JointsToDraw.append(joint)            
-        self.Window.Panel.redraw(PointsToDraw,[], self.DoPhysics())
+        for joint in self.JointList:
+            if set(IDstoDraw) >= joint[0]:
+                JointsToDraw.append(joint)            
+        self.Window.Panel.redraw(PointsToDraw,JointsToDraw, self.DoPhysics())
 
  
     def update_device_list(self):
@@ -163,17 +166,23 @@ class MainProgramm:
                 JointsToUse.append(joint)      
         
         #Berechung des CoM
-        CoM = QVector2D(0,0)
+        old_CoM = self.CoM
+        self.CoM.setX(0)
+        self.CoM.setY(0)
         TotalMass = 0
         for joint in JointsToUse:
 
-            CoM += joint[1] * self.CenterOfJoint(joint)
+            self.CoM += joint[1] * QVector2D(self.CenterOfJoint(joint).x(), self.CenterOfJoint(joint).y())
             TotalMass += joint[1]
         
-        CoM = CoM/TotalMass
+        self.CoM = self.CoM/TotalMass
         if TotalMass == 0:
             return None
-        return CoM
+        
+        KE = QVector2D.dotProduct(self.CoM-old_CoM,(self.CoM-old_CoM))*TotalMass*0.5
+        V = 9.81*self.CoM.y()*TotalMass
+        self.Window.setEnergies(KE,V)
+        return self.CoM
         
         
         
