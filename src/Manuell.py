@@ -69,7 +69,7 @@ for Frame in Frames:
  
 
 
-for Frame in Frames[:100]:
+for Frame in Frames[1000:1100]:
     for point in Frame:
         if not point is None:
             plot(point[0],point[1],'x')
@@ -93,6 +93,8 @@ connect = [4,5,6,7] ## Hier festlegen
 i = 0 
 for Frame in Frames:
     for j in range(4):
-        data[j][i] = mean([Frame[i],Frame[connect[i]]].remove(None))
+        tmp = [Frame[i],Frame[connect[i]]]
+        while None in tmp: tmp.remove(None)
+        data[j][i] = mean(tmp)
     i+=1
              

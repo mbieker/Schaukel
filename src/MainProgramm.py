@@ -123,8 +123,11 @@ class MainProgramm:
         for i in range(8):
             if not self.PointList[i] == None:
                 # Trafo PhysKS -> View KS
-                Point =   self.M_View_KS[i/4]*self.PointList[i]
-                PointsToDraw.append(QPointF(Point.item(0),Point.item(1)))
+                if i < 4:
+                    Point =   self.M_View_KS[0]*self.PointList[i]
+                else:
+                    Point =   self.M_View_KS[1]*self.PointList[i]                    
+                PointsToDraw.append(QPointF(Point.item(0)/Point.item(2),Point.item(1)/Point.item(2)))
                 IDstoDraw.append(i)
             else:
                 PointsToDraw.append(None)

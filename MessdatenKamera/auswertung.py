@@ -43,7 +43,6 @@ bilder = [(-2.299e2,-9.404e1),(-12.02,-69.76),(-1.538e2,3.044e2),(-1.138e2,3.044
 Trafo = Homography(   bilder , unit)
 #Trafo = identity(3)
 
-print Trafo
 
 # Import Data 
 filenames = ['Fuss', 'Becken', 'Schulter', 'Hand', 'Ellenbogen','Knie', 'Kopf', 'Sitz']
@@ -65,7 +64,7 @@ for file in filenames:
     i += 1
 
 Points = array(Points)
-print Points.T[:3]
+
 
 'Zeiten nachladen'
 time = loadtxt('Fuss', usecols=[0])
@@ -81,28 +80,36 @@ CoM = zeros((anz_frames,2))
 
 m_ges = 64.5 # kg
 
-vol_kopf = 1.0/6*0.55**3/pi*2
-vol_to = 0.65*pi*(0.8/(2*pi))**2
-vol_ua = .3*pi*(.23/(2*pi))**2
-vol_oa = .3*pi*(.275/(2*pi))**2
-vol_os = 0.36*pi*(.455/(2*pi))**2
-vol_us = .5*pi*(.29/(2*pi))**2
-vol_ges = vol_kopf+vol_os+vol_us+vol_ua+ vol_oa+vol_kopf+vol_to
+def vol_kugel(U):
+    r = U/(2*pi)
+    return 4*pi*r**3/3
+
+def vol_zylinder(U, l):
+    r = U/(2*pi)
+    return l*pi*r**2
+vol_kopf = vol_kugel(0.55)
+vol_to = vol_zylinder(0.80, .65)
+vol_ua = 2*vol_zylinder(.23, 0.30)
+vol_oa = 2*vol_zylinder(.275, .30)
+vol_os = 2*vol_zylinder(.455, .36)
+vol_us = 2*vol_zylinder(.29, .5)
+vol_ges = vol_kopf + vol_to + vol_ua + vol_oa + vol_os + vol_us
 rho = m_ges/vol_ges
 
 
-# Angaben des Zylinders-- Anfang und Ende-- Masse -- Radius
-m = array([vol_ua,vol_oa,vol_to,vol_os,vol_us])*rho #Massen der Zyinder
-r = array([1]*5) #Radien der Zylinder
-endP = [3,4,2,1,5,0]
+m = array([vol_ua,vol_oa,vol_to,vol_os,vol_us,vol_kopf])*rho #Massen der Zyinder
 
+endP = [3,4,2,1,5,0]
+print anz_frames
 
 for i in range(anz_frames):
     #Berechnung des Schwerpunktes
     for j in range(5):
         a = array(Points[endP[j]][i])
         b = array(Points[endP[j+1]][i])        
-        CoM[i] += 0.5*m.item(j)*(a+b)
+        CoM[i] += 0.5*m[j]*(a+b)
+    a = array(Points[6][i])    
+    CoM[i] += m[5]*a
     CoM[i] = CoM[i]/m_ges
 
 V_CoM = zeros((anz_frames,2))
@@ -124,12 +131,53 @@ CoMy = CoM.T[1]
 
 V_ges = array([sqrt(v[0]**2+v[1]**2) for v in V_CoM])
 
-#plot(time,sqrt(R_quad)-sqrt(R_quad[0]))
-plot(CoMx,CoMy,'x')
 
+#plot(CoMx[100:800],CoMy[100:800],'x')
+#plot(Points[7].T[0][100:800],Points[7].T[1][100:800],'o')
+#show()
+close()
 
-show()
+import matplotlib.animation as animation
 
+fig, (ax1, ax2) = subplots(2,1)
 
-        
+x = [0,0,1,1]    
+y= [0,1,1,2]
+ax1.set_ylim(-0.2,1.5)
+ax1.set_xlim(-1,3)
+ax2.plot(time,sqrt(R_quad)-sqrt(R_quad[0]))
+    # x-array
+body , = ax1.plot([],[],'o-')
+head, = ax1.plot([],[],"ro")
+SP, = ax1.plot([],[],'gx')
+timer, =  ax2.plot([],[],'r-')
+ax1.plot([CoM[0][0],CoM[0][0]],[-.2,1.5],'--')
+ax2.set_xlabel("Zeit [s]")
+ax2.set_ylabel(r"$\Delta r$ [m]")
+kopf = Points[6]
+hand = Points[3]
+ellenbogen = Points[4]
+schulter =Points[2]
+becken =Points[1]
+knie=Points[5]
+fuss=Points[0]
+print hand[3][0]
+def animate(i):
+    body.set_data([hand[i][0],ellenbogen[i][0],schulter[i][0],becken[i][0],knie[i][0],fuss[i][0]],[hand[i][1],ellenbogen[i][1],schulter[i][1],becken[i][1],knie[i][1],fuss[i][1]])  # update the data
+    head.set_data([kopf[i][0]],[kopf[i][1]])
+    timer.set_data([time[i],time[i]],[-.2,.3])
+    SP.set_data(CoM[i][0],CoM[i][1])
+    return body,head
 
+#Init only required for blitting to give a clean slate.
+def init():
+    body.set_data([hand[0][0],ellenbogen[0][0],schulter[0][0],becken[0][0],knie[0][0],fuss[0][0]],[hand[0][1],ellenbogen[0][1],schulter[0][1],becken[0][1],knie[0][1],fuss[0][1]])
+    head.set_data([kopf[0][0]],[kopf[0][1]])
+    CoM[0][0],CoM[0][1]    
+    timer.set_data([0,0],[-.2,.3])
+    return body, head
+
+ani = animation.FuncAnimation(fig, animate, np.arange(1, 1600), init_func=init,
+    interval=50, repeat=True)
+
+ani.save("camera.mp4")
